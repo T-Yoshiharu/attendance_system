@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出勤・退勤履歴</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>出勤・退勤履歴</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ユーザー名</th>
+                <th>出勤時間</th>
+                <th>退勤時間</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record[0] }}</td>  <!-- ユーザー名 -->
+                    <td>{{ record[1] if record[1] else '---' }}</td>  <!-- 出勤時間 -->
+                    <td>{{ record[2] if record[2] else '---' }}</td>  <!-- 退勤時間 -->
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">履歴がありません。</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><a href="{{ url_for('index') }}">戻る</a></p>
+</body>
+</html>

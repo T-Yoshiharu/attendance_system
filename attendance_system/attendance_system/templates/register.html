@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー登録</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 300px; margin: auto; }
+        label, input { display: block; margin-bottom: 10px; }
+        button { width: 100%; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>ユーザー登録</h1>
+    <form method="POST">
+        <label for="username">ユーザー名</label>
+        <input type="text" name="username" required>
+        
+        <label for="password">パスワード</label>
+        <input type="password" name="password" required>
+        
+        <button type="submit">登録</button>
+    </form>
+    <p>既にアカウントをお持ちの方は、<a href="{{ url_for('login') }}">こちら</a>からログインしてください。</p>
+</body>
+</html>
