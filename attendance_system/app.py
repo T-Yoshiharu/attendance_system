@@ -124,7 +124,7 @@ def history():
     else:
         # 一般ユーザーの場合、自分の履歴のみ取得
         cursor.execute('''
-            SELECT u.username, a.check_in_time, a.check_out_time 
+            SELECT u.username, a.check_in_time, a.check_out_time
             FROM attendance a
             JOIN users u ON a.user_id = u.id
             WHERE a.user_id = ?
