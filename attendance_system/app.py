@@ -21,6 +21,8 @@ def create_tables():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
             password TEXT NOT NULL,
+            content TEXT,
+            io INTEGER,
             is_admin INTEGER DEFAULT 0
         )
     ''')
