@@ -58,7 +58,7 @@ def login():
         if user and check_password_hash(user[2], password):
             session['user_id'] = user[0]
             session['username'] = username
-            session['is_admin'] = user[3]  # 管理者フラグをセッションに保存
+            session['is_admin'] = user[5]  # 管理者フラグをセッションに保存
             return redirect(url_for('index'))
         else:
             return 'ユーザー名またはパスワードが無効です'
@@ -172,6 +172,33 @@ def logout():
     session.pop('username', None)
     session.pop('is_admin', None)
     return redirect(url_for('login'))
+
+# パスワードの変更
+@app.route('/chagepass', methods=['GET', 'POST'])
+def changePass():
+    username = session.get('username')
+    if request.method == 'POST':
+        nowPass = request.form['password']
+        newPass1 = request.form['']
+        newPass2 = request.form['']
+
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+    user = cursor.fetchone()
+
+    # パスワードチェック
+    if user and check_password_hash(user[2], nowPass):
+        if newPass1 == newPass2:
+            # 新しいパスワードのハッシュ化
+            hashed_password = generate_password_hash(newPass1, method='pbkdf2:sha256')
+            # パスワードの書き換え
+            cursor.execute('UPDATE users SET password = ? WHERE user_id = ?', (hashed_password, user[0]))
+            conn.commit()
+    else:
+        return '現在のパスワードが無効です'
+
+    conn.close()
 
 if __name__ == '__main__':
     create_tables()  # テーブル作成
