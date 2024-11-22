@@ -5,7 +5,7 @@ from app import create_tables
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # 読み込むCSVファイルのパスを指定
-ifile = ""
+ifile = "./members.csv"
 
 # データベース接続
 def connect_db():
@@ -37,13 +37,14 @@ def register(username: str, password:str, content:str, inout: int) -> str:
 if __name__ == '__main__':
     create_tables()
     # ユーザー一括登録(CSVファイルから読み込み)
-    with open(ifile) as data:
+    with open(ifile, encoding="UTF-8") as data:
+        data.readline() # カラム行をスキップ
         reader = csv.reader(data)
         for d in reader:
             result = register(d[0], d[1], d[2], d[3])
             print(result)
 
-        print("登録完了")
+        print("===登録完了===")
 
 
 
