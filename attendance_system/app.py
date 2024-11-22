@@ -175,7 +175,7 @@ def logout():
 
 # パスワードの変更
 @app.route('/changepass', methods=['GET', 'POST'])
-def changePass():
+def changepass():
     username = session.get('username')
     if request.method == 'POST':
         nowPass = request.form['current_password']
@@ -193,12 +193,16 @@ def changePass():
                 # 新しいパスワードのハッシュ化
                 hashed_password = generate_password_hash(newPass1, method='pbkdf2:sha256')
                 # パスワードの書き換え
-                cursor.execute('UPDATE users SET password = ? WHERE user_id = ?', (hashed_password, user[0]))
+                cursor.execute('UPDATE users SET password = ? WHERE id = ?', (hashed_password, user[0]))
                 conn.commit()
         else:
             return '現在のパスワードが無効です'
 
-    conn.close()
+        conn.close()
+
+        return redirect(url_for('index'))
+
+    return render_template('changepass.html')
 
 if __name__ == '__main__':
     create_tables()  # テーブル作成

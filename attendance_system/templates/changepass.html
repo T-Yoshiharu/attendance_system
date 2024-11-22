@@ -67,7 +67,7 @@
 </head>
 <body>
     <h1>パスワードの変更</h1>
-    <form method="POST" action="{{ url_for('change_password') }}" onsubmit="validatePasswords(event)">
+    <form method="POST" action="{{ url_for('changepass') }}" onsubmit="validatePasswords(event)">
         <p id="error_message" class="error"></p>
         <label for="current_password">現在のパスワード</label>
         <input type="password" id="current_password" name="current_password" required>
