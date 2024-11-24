@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パスワードの変更</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="password"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function validatePasswords(event) {
+            // 現在のパスワード、確認用パスワードの値を取得
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            // エラー表示要素を取得
+            const errorElement = document.getElementById('error_message');
+
+            // パスワードの照合
+            if (newPassword !== confirmPassword) {
+                // エラー表示
+                errorElement.textContent = "新しいパスワードが一致しません。";
+                event.preventDefault(); // フォーム送信を中止
+            } else {
+                // エラーをクリア
+                errorElement.textContent = "";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>パスワードの変更</h1>
+    <form method="POST" action="{{ url_for('changepass') }}" onsubmit="validatePasswords(event)">
+        <p id="error_message" class="error"></p>
+        <label for="current_password">現在のパスワード</label>
+        <input type="password" id="current_password" name="current_password" required>
+
+        <label for="new_password">新しいパスワード</label>
+        <input type="password" id="new_password" name="new_password" required>
+
+        <label for="confirm_password">新しいパスワード（確認用）</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+
+        <button type="submit">パスワードを変更</button>
+    </form>
+</body>
+</html>
