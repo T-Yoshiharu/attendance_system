@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>パスワードの変更</title>
+    <title>出退勤管理システム | パスワードの変更</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,6 +43,7 @@
             margin-bottom: 10px;
             text-align: center;
         }
+        h1 { text-align: center; }
     </style>
     <script>
         function validatePasswords(event) {
@@ -66,7 +67,8 @@
     </script>
 </head>
 <body>
-    <h1>パスワードの変更</h1>
+    <h1>Y-topia 出退勤管理システム</h1>
+    <h2>パスワードの変更</h2>
     <form method="POST" action="{{ url_for('changepass') }}" onsubmit="validatePasswords(event)">
         <p id="error_message" class="error"></p>
         <label for="current_password">現在のパスワード</label>
