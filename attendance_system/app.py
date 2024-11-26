@@ -79,11 +79,15 @@ def index():
         conn = connect_db()
         cursor = conn.cursor()
 
+        # 現在のタイムスタンプを取得し"YY/MM/DD HH:MM:SS"の形式にする
+        now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
+
         if action == 'check_in':
-            cursor.execute('INSERT INTO attendance (user_id, check_in_time) VALUES (?, ?)', (user_id, datetime.now()))
+            cursor.execute('INSERT INTO attendance (user_id, check_in_time) VALUES (?, ?)', (user_id, timestamp))
         elif action == 'check_out':
             cursor.execute('UPDATE attendance SET check_out_time = ? WHERE user_id = ? AND check_out_time IS NULL',
-                           (datetime.now(), user_id))
+                           (timestamp, user_id))
 
         conn.commit()
         conn.close()
@@ -99,7 +103,7 @@ def index():
     if attendance and attendance[0] and attendance[1]:
         check_in_time = datetime.fromisoformat(attendance[0])
         check_out_time = datetime.fromisoformat(attendance[1])
-        working_hours = (check_out_time - check_in_time).total_seconds() / 3600
+        working_hours = check_out_time - check_in_time
 
     return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username)
 
