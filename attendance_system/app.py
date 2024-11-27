@@ -1,10 +1,31 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, has_request_context
 from datetime import datetime
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+import logging
+from admin_services import DiscordHandler
+import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # セッション管理のためのシークレットキー
+
+with open("id.json", "r") as f:
+    ids = json.load(f)
+
+
+# Discordへのログ出力
+webhook_url = ids["Discord"]
+# Discord Handler の作成
+discord_handler = DiscordHandler(webhook_url)
+discord_handler.setLevel(logging.INFO)
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.addHandler(discord_handler)
+
+# コンソールのログ出力
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+werkzeug_logger.addHandler(console_handler)
+
 
 # データベース接続
 def connect_db():
