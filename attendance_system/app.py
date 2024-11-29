@@ -16,7 +16,7 @@ with open("id.json", "r") as f:
 
 
 # Discordへのログ出力
-webhook_url = ids["test"]
+webhook_url = ids["Discord"]
 # Discord Handler の作成
 discord_handler = DiscordHandler(webhook_url)
 discord_handler.setLevel(logging.INFO)
