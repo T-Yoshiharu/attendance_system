@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 from admin_services import DiscordHandler
 import json
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # セッション管理のためのシークレットキー
@@ -14,7 +16,7 @@ with open("id.json", "r") as f:
 
 
 # Discordへのログ出力
-webhook_url = ids["Discord"]
+webhook_url = ids["test"]
 # Discord Handler の作成
 discord_handler = DiscordHandler(webhook_url)
 discord_handler.setLevel(logging.INFO)
@@ -25,6 +27,15 @@ werkzeug_logger.addHandler(discord_handler)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 werkzeug_logger.addHandler(console_handler)
+
+
+# レート制限のデフォルト設定
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "120 per hour"],
+    storage_uri="memory://",
+)
 
 
 # データベース接続
@@ -87,7 +98,8 @@ def login():
     return render_template('login.html')
 
 # 出勤・退勤打刻
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['POST'])
+@limiter.limit("1 per minute")
 def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -112,6 +124,30 @@ def index():
 
         conn.commit()
         conn.close()
+
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT check_in_time, check_out_time FROM attendance WHERE user_id = ? ORDER BY id DESC LIMIT 1',
+                   (user_id,))
+    attendance = cursor.fetchone()
+    conn.close()
+
+    working_hours = None
+    if attendance and attendance[0] and attendance[1]:
+        check_in_time = datetime.fromisoformat(attendance[0])
+        check_out_time = datetime.fromisoformat(attendance[1])
+        working_hours = check_out_time - check_in_time
+
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username)
+
+# ホーム画面の表示
+@app.route('/', methods=['GET'])
+def get_index():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    username = session.get('username')
 
     conn = connect_db()
     cursor = conn.cursor()
