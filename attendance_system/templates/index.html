@@ -8,8 +8,21 @@
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { text-align: center; }
         form { max-width: 300px; margin: auto; text-align: center; }
-        button { width: 100%; padding: 10px; margin: 10px 0; }
+        button { width: 100%; padding: 10px; margin: 10px 0; font-size: large; }
         p { text-align: center; }
+        #attention {
+            color: red;
+        }
+        select{
+            padding: 7px;
+            font-size: medium;
+        }
+        option {
+            padding: 0 16px;
+            height: 48px;
+            font-size: medium;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -30,12 +43,14 @@
     {% endif %}
     
     <form method="post" id="stamp">
-        <p>出勤打刻時に活動場所を必ず選択!</p>
-        <p>活動場所: <select name="location" form="stamp">
+    {% if (not attendance) or (working_hours) %}
+        <p id="attention">出勤打刻時に必ず活動場所を選択!</p>
+        <p >活動場所: <select name="location" form="stamp">
             {% for loc in location %}
             <option value="{{loc[0]}}">{{loc[1]}}</option>
             {% endfor %}
         </select></p>
+    {% endif %}
         <button name="action" value="check_in">出勤</button>
         <button name="action" value="check_out">退勤</button>
     </form>
