@@ -66,7 +66,15 @@ def create_tables():
             user_id INTEGER,
             check_in_time TEXT,
             check_out_time TEXT,
+            location TEXT REFERENCES locations(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS locations (
+            id INTEGER PRIMARY KEY,
+            location_name TEXT NOT NULL
         )
     ''')
 
@@ -117,7 +125,8 @@ def index():
         timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
 
         if action == 'check_in':
-            cursor.execute('INSERT INTO attendance (user_id, check_in_time) VALUES (?, ?)', (user_id, timestamp))
+            location = request.form["location"]
+            cursor.execute('INSERT INTO attendance (user_id, check_in_time, location) VALUES (?, ?, ?)', (user_id, timestamp, location))
         elif action == 'check_out':
             cursor.execute('UPDATE attendance SET check_out_time = ? WHERE user_id = ? AND check_out_time IS NULL',
                            (timestamp, user_id))
@@ -130,6 +139,8 @@ def index():
     cursor.execute('SELECT check_in_time, check_out_time FROM attendance WHERE user_id = ? ORDER BY id DESC LIMIT 1',
                    (user_id,))
     attendance = cursor.fetchone()
+    cursor.execute('SELECT * FROM locations')
+    location = cursor.fetchall()
     conn.close()
 
     working_hours = None
@@ -138,7 +149,7 @@ def index():
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location)
 
 # ホーム画面の表示
 @app.route('/', methods=['GET'])
@@ -154,6 +165,8 @@ def get_index():
     cursor.execute('SELECT check_in_time, check_out_time FROM attendance WHERE user_id = ? ORDER BY id DESC LIMIT 1',
                    (user_id,))
     attendance = cursor.fetchone()
+    cursor.execute('SELECT * FROM locations')
+    location = cursor.fetchall()
     conn.close()
 
     working_hours = None
@@ -162,7 +175,7 @@ def get_index():
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location)
 
 # ユーザーおよび管理者の退勤履歴を表示
 @app.route('/history', methods=['GET'])
@@ -179,17 +192,19 @@ def history():
     if is_admin:
         # 管理者の場合、全ユーザーの履歴を取得
         cursor.execute('''
-            SELECT u.username, a.check_in_time, a.check_out_time 
+            SELECT u.username, a.check_in_time, a.check_out_time, l.location_name
             FROM attendance a
             JOIN users u ON a.user_id = u.id
+            JOIN locations l ON a.location = l.id
             ORDER BY a.check_in_time DESC
         ''')
     else:
         # 一般ユーザーの場合、自分の履歴のみ取得
         cursor.execute('''
-            SELECT u.username, a.check_in_time, a.check_out_time
+            SELECT u.username, a.check_in_time, a.check_out_time, l.location_name
             FROM attendance a
             JOIN users u ON a.user_id = u.id
+            JOIN locations l ON a.location = l.id
             WHERE a.user_id = ?
             ORDER BY a.check_in_time DESC
         ''', (user_id,))

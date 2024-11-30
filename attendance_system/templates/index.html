@@ -29,7 +29,13 @@
         <p>まだ出勤データがありません。</p>
     {% endif %}
     
-    <form method="post">
+    <form method="post" id="stamp">
+        <p>出勤打刻時に活動場所を必ず選択!</p>
+        <p>活動場所: <select name="location" form="stamp">
+            {% for loc in location %}
+            <option value="{{loc[0]}}">{{loc[1]}}</option>
+            {% endfor %}
+        </select></p>
         <button name="action" value="check_in">出勤</button>
         <button name="action" value="check_out">退勤</button>
     </form>
