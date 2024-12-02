@@ -1,15 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
 import sqlite3, csv
-from app import create_tables
+from app import create_tables, connect_db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # 読み込むCSVファイルのパスを指定
 ifile = "./members.csv"
 
-# データベース接続
-def connect_db():
-    return sqlite3.connect('attendance.db')
 
 # ユーザー登録
 def register(username: str, password:str, content:str, inout: int) -> str:

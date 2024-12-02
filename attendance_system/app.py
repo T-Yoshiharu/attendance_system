@@ -40,7 +40,7 @@ limiter = Limiter(
 
 # データベース接続
 def connect_db():
-    return sqlite3.connect('attendance.db')
+    return sqlite3.connect('.attendance.db')
 
 # テーブル作成（初回のみ）
 def create_tables():

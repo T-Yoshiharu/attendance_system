@@ -1,8 +1,5 @@
-# from app import connect_db
+from app import connect_db
 import sqlite3
-
-def connect_db():
-    return sqlite3.connect('attendance.db')
 
 
 # DMへの書き込み
@@ -33,6 +30,7 @@ def readSQL(query: str = None):
     # 結果の出力
     for i in output:
         print(i)
+
 
 if __name__ == '__main__':
     while True:
