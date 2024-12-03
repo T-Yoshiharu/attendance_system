@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, has_request_context
 from datetime import datetime
-import sqlite3
+import sqlite3, logging, json, sys, pathlib
 from werkzeug.security import generate_password_hash, check_password_hash
-import logging
 from admin_services import DiscordHandler
-import json
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
+# 親ディレクトリの設定(Yt24_attendance)
+parent_dir = str(pathlib.Path(__file__).parent.parent.resolve())
+sys.path.append(parent_dir)
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # セッション管理のためのシークレットキー
@@ -40,7 +42,7 @@ limiter = Limiter(
 
 # データベース接続
 def connect_db():
-    return sqlite3.connect('.attendance.db')
+    return sqlite3.connect('attendance.db')
 
 # テーブル作成（初回のみ）
 def create_tables():

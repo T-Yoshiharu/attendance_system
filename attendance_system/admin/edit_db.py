@@ -1,5 +1,7 @@
+import sys, pathlib
+parent_dir = str(pathlib.Path(__file__).parent.parent.resolve())
+sys.path.append(parent_dir)
 from app import connect_db
-import sqlite3
 
 
 # DMへの書き込み
@@ -27,9 +29,7 @@ def readSQL(query: str = None):
     output = cursor.fetchall()
     conn.close()
 
-    # 結果の出力
-    for i in output:
-        print(i)
+    return output
 
 
 if __name__ == '__main__':
@@ -41,7 +41,10 @@ if __name__ == '__main__':
             writeSQL(query)
         elif func == "readSQL":
             query = input("SQLのクエリ文を入力: ")
-            readSQL(query)
+            ans = readSQL(query)
+            # 結果の出力
+            for i in ans:
+                print(i)
         elif func == "exit":
             print("===終了します===")
             break
