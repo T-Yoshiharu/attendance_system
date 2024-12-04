@@ -5,18 +5,20 @@ sys.path.append(parent_dir)
 from admin.edit_db import readSQL
 
 
+# DBファイルのコピー作成
 def copy_db_file():
-    now = datetime.now().strftime('%Y%m%d-%H:%M')
+    now = datetime.now().strftime('%Y%m%d-%H%M')
     fname = f"attendance_backup_{now}.db"
 
     sub.call("cd ~/Yt24_attendance/") #cwdを正す
-    sub.call(f"cp {fname}") #ファイルをコピーする
-    sub.call(f"mv {fname} ~/backup/") #所定の場所にファイルを移動させる
+    sub.call(f"cp attendance.db {fname}") #ファイルをコピーする
     sub.call(f"chmod 544 {fname}") #ファイルが破損しないように権限を変更
+    sub.call(f"mv {fname} ~/backup-DB/") #所定の場所にファイルを移動させる
 
 
+# DBの指定されたテーブルをCSVにして保存
 def export_table_csv(table_name: str, dir: str):
-    now = datetime.now().strftime('%Y%m%d-%H:%M')
+    now = datetime.now().strftime('%Y%m%d_%H%M')
     sql1 = f"PRAGMA TABLE_INFO({table_name});"
     sql2 = f"SELECT * FROM {table_name};"
     fname = f"./attendance_system/backupDB/{dir}/{table_name}_{now}.csv"
@@ -40,8 +42,9 @@ def export_table_csv(table_name: str, dir: str):
             writer.writerow(d)
 
 
+# DBの出退勤履歴の集計をCSVにして保存
 def export_attendance_view():
-    now = datetime.now().strftime('%Y%m%d-%H:%M')
+    now = datetime.now().strftime('%Y%m%d-%H%M')
     sql = '''
             SELECT u.username, a.check_in_time, a.check_out_time, l.location_name
             FROM attendance a
