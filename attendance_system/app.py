@@ -116,25 +116,36 @@ def index():
 
     user_id = session['user_id']
     username = session.get('username')
+    action = request.form['action']
+    is_checkout = True # 退勤フラグ(デフォルトTrue)
 
-    if request.method == 'POST':
-        action = request.form['action']
-        conn = connect_db()
-        cursor = conn.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
 
-        # 現在のタイムスタンプを取得し"YY/MM/DD HH:MM:SS"の形式にする
-        now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-        timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
+    # 現在のタイムスタンプを取得し"YY/MM/DD HH:MM:SS"の形式にする
+    now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+    timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
 
-        if action == 'check_in':
-            location = request.form["location"]
-            cursor.execute('INSERT INTO attendance (user_id, check_in_time, location) VALUES (?, ?, ?)', (user_id, timestamp, location))
-        elif action == 'check_out':
-            cursor.execute('UPDATE attendance SET check_out_time = ? WHERE user_id = ? AND check_out_time IS NULL',
-                           (timestamp, user_id))
+    if action == 'check_in':
+        location = request.form["location"]
+        cursor.execute('INSERT INTO attendance (user_id, check_in_time, location) VALUES (?, ?, ?)', (user_id, timestamp, location))
+        is_checkout = False
+    elif action == 'check_out': # 当日分のみ退勤打刻可とする
+        cursor.execute('SELECT id, check_in_time FROM attendance WHERE user_id = ? AND check_out_time IS NULL ORDER BY id DESC LIMIT 1', (user_id,))
+        latest = cursor.fetchone()
 
-        conn.commit()
-        conn.close()
+        if latest:
+            latest_date = datetime.fromisoformat(latest[1]).date()
+            if latest_date == timestamp.date():
+                cursor.execute('UPDATE attendance SET check_out_time = ? WHERE id = ? AND check_out_time IS NULL',
+                            (timestamp, latest[0]))
+            else:
+                return "打刻可能な出勤履歴がありません"
+        else:
+            return "打刻可能な出勤履歴がありません"
+
+    conn.commit()
+    conn.close()
 
     conn = connect_db()
     cursor = conn.cursor()
@@ -151,7 +162,7 @@ def index():
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout)
 
 # ホーム画面の表示
 @app.route('/', methods=['GET'])
@@ -161,6 +172,8 @@ def get_index():
 
     user_id = session['user_id']
     username = session.get('username')
+    is_checkout = True # 退勤フラグ(デフォルトTrue)
+    now = datetime.now().date()
 
     conn = connect_db()
     cursor = conn.cursor()
@@ -171,13 +184,18 @@ def get_index():
     location = cursor.fetchall()
     conn.close()
 
+    # 退勤状態の判定とフラグの設定
+    date = datetime.fromisoformat(attendance[0]).date()
+    if not((date < now) or attendance[1]):
+        is_checkout = False
+
     working_hours = None
     if attendance and attendance[0] and attendance[1]:
         check_in_time = datetime.fromisoformat(attendance[0])
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout)
 
 # ユーザーおよび管理者の退勤履歴を表示
 @app.route('/history', methods=['GET'])
