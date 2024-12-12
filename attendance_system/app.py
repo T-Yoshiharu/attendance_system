@@ -132,14 +132,15 @@ def index():
         is_checkout = False
     elif action == 'check_out': # 当日分のみ退勤打刻可とする
         cursor.execute('SELECT id, check_in_time FROM attendance WHERE user_id = ? AND check_out_time IS NULL ORDER BY id DESC LIMIT 1', (user_id,))
-        latest = cursor.fetchone()
+        latest = cursor.fetchall()
 
         if latest:
-            latest_date = datetime.fromisoformat(latest[1]).date()
-            if latest_date == timestamp.date():
-                cursor.execute('UPDATE attendance SET check_out_time = ? WHERE id = ? AND check_out_time IS NULL',
-                            (timestamp, latest[0]))
-            else:
+            for i in latest:
+                latest_date = datetime.fromisoformat(i[1]).date()
+                if latest_date == timestamp.date():
+                    cursor.execute('UPDATE attendance SET check_out_time = ? WHERE id = ? AND check_out_time IS NULL',
+                                (timestamp, i[0]))
+                    break
                 return "打刻可能な出勤履歴がありません"
         else:
             return "打刻可能な出勤履歴がありません"
@@ -186,7 +187,7 @@ def get_index():
 
     # 退勤状態の判定とフラグの設定
     date = datetime.fromisoformat(attendance[0]).date()
-    if not((date < now) or attendance[1]):
+    if (date == now) and (not attendance[1]):
         is_checkout = False
 
     working_hours = None
