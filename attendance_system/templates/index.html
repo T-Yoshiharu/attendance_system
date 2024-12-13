@@ -24,6 +24,29 @@
             cursor: pointer;
         }
     </style>
+    <script>
+        // 打刻可否判定の関数
+        function check(io){
+            // Flaskのテンプレートからis_checkoutの値を取得
+            const isCheckout = "{{ is_checkout }}";
+
+            // 退勤フラグから出退勤が打刻可能か判定
+            switch (io){
+                case 0: // 出勤打刻時
+                    if (isCheckout == "False"){
+                        event.preventDefault(); // フォーム送信を中止
+                        alert('退勤が未打刻です\n退勤を打刻して、1分後にもう一度お試しください');
+                    };
+                    break;
+                case 1: // 退勤打刻時
+                    if (isCheckout == "True"){
+                        event.preventDefault(); // フォーム送信を中止
+                        alert('打刻可能な出勤履歴がありません');
+                    };
+                    break;
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Y-topia 出退勤管理システム</h1>
@@ -51,8 +74,8 @@
             {% endfor %}
         </select></p>
     {% endif %}
-        <button name="action" value="check_in">出勤</button>
-        <button name="action" value="check_out">退勤</button>
+        <button name="action" value="check_in" onclick="check(0)">出勤</button>
+        <button name="action" value="check_out" onclick="check(1)">退勤</button>
     </form>
 
     <!-- 出勤・退勤履歴へのリンク -->
