@@ -115,21 +115,18 @@ def index():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    username = session.get('username')
     action = request.form['action']
-    is_checkout = True # 退勤フラグ(デフォルトTrue)
-
-    conn = connect_db()
-    cursor = conn.cursor()
 
     # 現在のタイムスタンプを取得し"YY/MM/DD HH:MM:SS"の形式にする
     now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
     timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
 
+    conn = connect_db()
+    cursor = conn.cursor()
+
     if action == 'check_in':
         location = request.form["location"]
         cursor.execute('INSERT INTO attendance (user_id, check_in_time, location) VALUES (?, ?, ?)', (user_id, timestamp, location))
-        is_checkout = False
     elif action == 'check_out': # 当日分のみ退勤打刻可とする
         cursor.execute('SELECT id, check_in_time FROM attendance WHERE user_id = ? AND check_out_time IS NULL ORDER BY id DESC LIMIT 1', (user_id,))
         latest = cursor.fetchall()
@@ -148,22 +145,7 @@ def index():
     conn.commit()
     conn.close()
 
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT check_in_time, check_out_time FROM attendance WHERE user_id = ? ORDER BY id DESC LIMIT 1',
-                   (user_id,))
-    attendance = cursor.fetchone()
-    cursor.execute('SELECT * FROM locations')
-    location = cursor.fetchall()
-    conn.close()
-
-    working_hours = None
-    if attendance and attendance[0] and attendance[1]:
-        check_in_time = datetime.fromisoformat(attendance[0])
-        check_out_time = datetime.fromisoformat(attendance[1])
-        working_hours = check_out_time - check_in_time
-
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout, time=timestamp.date())
+    return redirect(url_for("get_index")) #GETメソッドへのリダイレクト（POSTの再送防止）
 
 # ホーム画面の表示
 @app.route('/', methods=['GET'])
@@ -185,16 +167,18 @@ def get_index():
     location = cursor.fetchall()
     conn.close()
 
-    # 退勤状態の判定とフラグの設定
-    date = datetime.fromisoformat(attendance[0]).date()
-    if (date == now) and (not attendance[1]):
-        is_checkout = False
-
     working_hours = None
-    if attendance and attendance[0] and attendance[1]:
-        check_in_time = datetime.fromisoformat(attendance[0])
-        check_out_time = datetime.fromisoformat(attendance[1])
-        working_hours = check_out_time - check_in_time
+
+    if attendance:
+        # 退勤状態の判定とフラグの設定
+        date = datetime.fromisoformat(attendance[0]).date()
+        if (date == now) and (not attendance[1]):
+            is_checkout = False
+
+        if attendance[0] and attendance[1]:
+            check_in_time = datetime.fromisoformat(attendance[0])
+            check_out_time = datetime.fromisoformat(attendance[1])
+            working_hours = check_out_time - check_in_time
 
     return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout, time=now)
 
