@@ -163,7 +163,7 @@ def index():
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout, time=timestamp.date())
 
 # ホーム画面の表示
 @app.route('/', methods=['GET'])
@@ -196,7 +196,7 @@ def get_index():
         check_out_time = datetime.fromisoformat(attendance[1])
         working_hours = check_out_time - check_in_time
 
-    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout)
+    return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout, time=now)
 
 # ユーザーおよび管理者の退勤履歴を表示
 @app.route('/history', methods=['GET'])

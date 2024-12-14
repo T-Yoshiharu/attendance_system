@@ -30,6 +30,18 @@
             // Flaskのテンプレートからis_checkoutの値を取得
             const isCheckout = "{{ is_checkout }}";
 
+            // 日付が変わったかの判定
+            if (isCheckout == "False"){
+                // 現在と出勤の日付を取得
+                let now = new Date().toLocaleDateString();
+                let road_date = new Date("{{ time }}").toLocaleDateString();
+
+                if (now > road_date){
+                    event.preventDefault(); // フォーム送信を中止
+                    alert('日付が変わりました\nページをリロードして、もう一度お試しください');
+                }
+            }
+
             // 退勤フラグから出退勤が打刻可能か判定
             switch (io){
                 case 0: // 出勤打刻時
