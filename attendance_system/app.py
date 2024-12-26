@@ -39,6 +39,8 @@ limiter = Limiter(
     storage_uri="memory://",
 )
 
+# 打刻中のユーザーリスト
+stamping = []
 
 # データベース接続
 def connect_db():
@@ -109,13 +111,18 @@ def login():
 
 # 出勤・退勤打刻
 @app.route('/', methods=['POST'])
-@limiter.limit("1 per minute")
 def index():
+    global stamping
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     user_id = session['user_id']
     action = request.form['action']
+
+    if user_id not in stamping:
+        stamping.append(user_id)
+    else:
+        return "打刻中です"
 
     # 現在のタイムスタンプを取得し"YY/MM/DD HH:MM:SS"の形式にする
     now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
@@ -144,6 +151,8 @@ def index():
 
     conn.commit()
     conn.close()
+
+    stamping.remove(user_id)
 
     return redirect(url_for("get_index")) #GETメソッドへのリダイレクト（POSTの再送防止）
 
