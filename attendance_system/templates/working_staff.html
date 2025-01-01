@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出退勤管理システム | 出勤中スタッフ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Y-topia 出退勤管理システム</h1>
+    <h2>出勤中のスタッフ</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ユーザー名</th>
+                <th>所属コンテンツ</th>
+                <th>315開閉可否</th>
+                <th>出勤時刻</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for list in working_list %}
+            <tr>
+                <td>{{ list[0] }}</td> <!-- ユーザー名 -->
+                <td>{{ list[1] }}</td> <!-- 所属コンテンツ -->
+                <td>{{ '可' if list[2]==1 else '不可' }}</td> <!-- 315開閉可否 -->
+                <td>{{ list[3] }}</td> <!-- 出勤時刻 -->
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">出勤中のスタッフはいません</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><a href="{{ url_for('index') }}">戻る</a></p>
+</body>
+
+</html>

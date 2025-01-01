@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from admin_services import DiscordHandler
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+# from admin.edit_db import readSQL
 
 # 親ディレクトリの設定(Yt24_attendance)
 parent_dir = str(pathlib.Path(__file__).parent.parent.resolve())
@@ -284,6 +285,25 @@ def changepass():
         return redirect(url_for('index'))
 
     return render_template('changepass.html')
+
+# 出勤中ユーザーの一覧表示
+@app.route("/working_staff", methods=['GET'])
+def isWorking():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    # 出勤中のユーザー情報を取得
+    sql = f"SELECT u.username, u.content, u.io, a.check_in_time FROM attendance a JOIN users u ON a.user_id = u.id WHERE a.check_in_time LIKE '{today}%' AND a.check_out_time IS NULL"
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    working_list = cursor.fetchall()
+    conn.close()
+
+    return render_template("working_staff.html", working_list=working_list)
+
 
 if __name__ == '__main__':
     create_tables()  # テーブル作成
