@@ -7,13 +7,11 @@ from admin.edit_db import readSQL
 
 # DBファイルのコピー作成
 def copy_db_file():
-    now = datetime.now().strftime('%Y%m%d-%H%M')
-    fname = f"attendance_backup_{now}.db"
+    now = datetime.now().strftime('%Y%m%d-%H%M') # 日時の取得
+    fname = f"attendance_backup_{now}.db" # ファイル名の設定
 
-    sub.call("cd ~/Yt24_attendance/") #cwdを正す
-    sub.call(f"cp attendance.db {fname}") #ファイルをコピーする
-    sub.call(f"chmod 544 {fname}") #ファイルが破損しないように権限を変更
-    sub.call(f"mv {fname} ~/backup-DB/") #所定の場所にファイルを移動させる
+    # バックアップの実行
+    sub.run(["./attendance_system/admin/backup_db.sh", fname])
 
 
 # DBの指定されたテーブルをCSVにして保存
