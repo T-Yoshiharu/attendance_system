@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>出退勤管理システム | 出勤中スタッフ</title>
+    <title>出退勤管理システム | 出勤中のスタッフ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,14 +41,16 @@
 
 <body>
     <h1>Y-topia 出退勤管理システム</h1>
-    <h2>出勤中のスタッフ</h2>
+    <h2>研C315に出勤中のスタッフ</h2>
+
+    <p><a href="http://10.206.84.200:5000" id="stamp">打刻する</a></p>
 
     <table>
         <thead>
             <tr>
                 <th>ユーザー名</th>
                 <th>所属コンテンツ</th>
-                <th>315開閉可否</th>
+                <th>研C315開閉</th>
                 <th>出勤時刻</th>
             </tr>
         </thead>
@@ -62,11 +64,15 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="4">出勤中のスタッフはいません</td>
+                <td colspan="4">研C315に出勤中のスタッフはいません</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <p>※このデータは、"Y-topia 出退勤管理システム"の打刻履歴のみに基づいています<br>
+        　そのため、打刻を忘れているメンバーは表示されません
+    </p>
 
     <p><a href="{{ url_for('index') }}">戻る</a></p>
 </body>

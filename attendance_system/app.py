@@ -295,7 +295,7 @@ def isWorking():
     today = datetime.now().strftime('%Y-%m-%d')
 
     # 出勤中のユーザー情報を取得
-    sql = f"SELECT u.username, u.content, u.io, a.check_in_time FROM attendance a JOIN users u ON a.user_id = u.id WHERE a.check_in_time LIKE '{today}%' AND a.check_out_time IS NULL"
+    sql = f"SELECT u.username, u.content, u.io, a.check_in_time FROM attendance a JOIN users u ON a.user_id = u.id WHERE a.check_in_time LIKE '{today}%' AND a.check_out_time IS NULL AND a.location=315"
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute(sql)
