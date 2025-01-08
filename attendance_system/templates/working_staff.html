@@ -46,14 +46,20 @@
             text-decoration: none;
             display: block;
             width: 250px;
-            padding: 15px 0;
+            padding: 10px 0;
             margin-left: auto;
             background: #569f3c;
             color: #FFF;
             text-align: center;
-            position: absolute;
-            right: 0px;
-            top: -10px;
+        }
+
+        @media screen and (min-width: 480px) {
+            #stamp {
+                font-size: large;
+                position: absolute;
+                right: 0px;
+                top: -10px;
+            }
         }
 
         #stamp:hover {
@@ -70,7 +76,7 @@
     <h1>Y-topia 出退勤管理システム</h1>
     <div id="title">
         <h2>研C315に出勤中のスタッフ</h2>
-        <p><a href="http://10.206.84.200:5000" id="stamp">打刻する</a></p>
+        <p><a href="http://10.206.84.200:5000" id="stamp">学内アクセスで打刻する</a></p>
     </div>
 
     <table>
@@ -93,7 +99,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="4">研C315に出勤中のスタッフはいません</td>
+                <td colspan="4">現在, 研C315に出勤中のスタッフはいません</td>
             </tr>
             {% endfor %}
         </tbody>
