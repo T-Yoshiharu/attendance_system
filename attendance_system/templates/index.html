@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出退勤管理システム | ホーム</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        form { max-width: 300px; margin: auto; text-align: center; }
-        button { width: 100%; padding: 10px; margin: 10px 0; font-size: large; }
-        p { text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 300px;
+            margin: auto;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: large;
+        }
+
+        p {
+            text-align: center;
+        }
+
         #attention {
             color: red;
         }
-        select{
+
+        select {
             padding: 7px;
             font-size: medium;
         }
+
         option {
             padding: 0 16px;
             height: 48px;
@@ -26,32 +50,32 @@
     </style>
     <script>
         // 打刻可否判定の関数
-        function check(io){
+        function check(io) {
             // Flaskのテンプレートからis_checkoutの値を取得
             const isCheckout = "{{ is_checkout }}";
 
             // 日付が変わったかの判定
-            if (isCheckout == "False"){
+            if (isCheckout == "False") {
                 // 現在と出勤の日付を取得
                 let now = new Date().toLocaleDateString();
                 let road_date = new Date("{{ time }}").toLocaleDateString();
 
-                if (now > road_date){
+                if (now > road_date) {
                     event.preventDefault(); // フォーム送信を中止
                     alert('日付が変わりました\nページをリロードして、もう一度お試しください');
                 }
             }
 
             // 退勤フラグから出退勤が打刻可能か判定
-            switch (io){
+            switch (io) {
                 case 0: // 出勤打刻時
-                    if (isCheckout == "False"){
+                    if (isCheckout == "False") {
                         event.preventDefault(); // フォーム送信を中止
                         alert('退勤が未打刻です\n退勤を打刻して、1分後にもう一度お試しください');
                     };
                     break;
                 case 1: // 退勤打刻時
-                    if (isCheckout == "True"){
+                    if (isCheckout == "True") {
                         event.preventDefault(); // フォーム送信を中止
                         alert('打刻可能な出勤履歴がありません');
                     };
@@ -60,43 +84,45 @@
         }
     </script>
 </head>
+
 <body>
     <h1>Y-topia 出退勤管理システム</h1>
 
     <p>ようこそ、{{ username }}さん！</p>
 
     {% if attendance %}
-        <p>出勤時間: {{ attendance[0] }}</p>
-        <p>退勤時間: {{ attendance[1] }}</p>
-        {% if is_checkout %}
-            <p>勤務時間: {{ working_hours }}</p>
-        {% else %}
-            <p>退勤がまだ打刻されていません。</p>
-        {% endif %}
+    <p>出勤時間: {{ attendance[0] }}</p>
+    <p>退勤時間: {{ attendance[1] }}</p>
+    {% if is_checkout %}
+    <p>勤務時間: {{ working_hours }}</p>
     {% else %}
-        <p>まだ出勤データがありません。</p>
+    <p>退勤がまだ打刻されていません。</p>
+    {% endif %}
+    {% else %}
+    <p>まだ出勤データがありません。</p>
     {% endif %}
 
     <form method="post" id="stamp">
-    {% if is_checkout %}
+        {% if is_checkout %}
         <p id="attention">出勤打刻時に必ず活動場所を選択!</p>
-        <p >活動場所: <select name="location" form="stamp">
-            {% for loc in location %}
-            <option value="{{loc[0]}}">{{loc[1]}}</option>
-            {% endfor %}
-        </select></p>
-    {% endif %}
+        <p>活動場所: <select name="location" form="stamp">
+                {% for loc in location %}
+                <option value="{{loc[0]}}">{{loc[1]}}</option>
+                {% endfor %}
+            </select></p>
+        {% endif %}
         <button name="action" value="check_in" onclick="check(0)">出勤</button>
         <button name="action" value="check_out" onclick="check(1)">退勤</button>
     </form>
 
     <!-- 出勤・退勤履歴へのリンク -->
-    <p><a href="{{ url_for('history') }}">出勤・退勤履歴を確認する</a></p>
+    <p><a href="{{ url_for('history') }}">出勤・退勤履歴</a></p>
 
-    <p><a href="{{ url_for('isWorking') }}">出勤中のユーザーを確認する</a></p>
+    <p><a href="{{ url_for('isWorking') }}">研C315に出勤中のメンバー</a></p>
 
-    <p><a href="{{ url_for('changepass') }}">パスワードを変更する</a></p>
+    <p><a href="{{ url_for('changepass') }}">パスワードの変更</a></p>
 
     <p><a href="{{ url_for('logout') }}">ログアウト</a></p>
 </body>
+
 </html>

@@ -36,14 +36,42 @@
         h1 {
             text-align: center;
         }
+
+        .io {
+            color: red;
+            font-weight: bold;
+        }
+
+        #stamp {
+            text-decoration: none;
+            display: block;
+            width: 250px;
+            padding: 15px 0;
+            margin-left: auto;
+            background: #569f3c;
+            color: #FFF;
+            text-align: center;
+            position: absolute;
+            right: 0px;
+            top: -10px;
+        }
+
+        #stamp:hover {
+            background: #225f0d;
+        }
+
+        #title {
+            position: relative;
+        }
     </style>
 </head>
 
 <body>
     <h1>Y-topia 出退勤管理システム</h1>
-    <h2>研C315に出勤中のスタッフ</h2>
-
-    <p><a href="http://10.206.84.200:5000" id="stamp">打刻する</a></p>
+    <div id="title">
+        <h2>研C315に出勤中のスタッフ</h2>
+        <p><a href="http://10.206.84.200:5000" id="stamp">打刻する</a></p>
+    </div>
 
     <table>
         <thead>
@@ -59,7 +87,8 @@
             <tr>
                 <td>{{ list[0] }}</td> <!-- ユーザー名 -->
                 <td>{{ list[1] }}</td> <!-- 所属コンテンツ -->
-                <td>{{ '可' if list[2]==1 else '不可' }}</td> <!-- 315開閉可否 -->
+                <td class={{ "io" if list[2]==1 else "" }}>
+                    {{ '可' if list[2]==1 else '不可' }}</td> <!-- 315開閉可否 -->
                 <td>{{ list[3] }}</td> <!-- 出勤時刻 -->
             </tr>
             {% else %}
@@ -71,7 +100,7 @@
     </table>
 
     <p>※このデータは、"Y-topia 出退勤管理システム"の打刻履歴のみに基づいています<br>
-        　そのため、打刻を忘れているメンバーは表示されません
+        　そのため、打刻をしていないメンバーは表示されません
     </p>
 
     <p><a href="{{ url_for('index') }}">戻る</a></p>
