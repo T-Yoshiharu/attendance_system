@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-CWDの設定
+# CWDの設定
 cd ~/Yt24_attendance/
 
 cp attendance.db $1
