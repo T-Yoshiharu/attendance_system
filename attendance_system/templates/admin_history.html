@@ -1,22 +1,53 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出退勤管理システム | 全ユーザーの出勤・退勤履歴</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        table, th, td { border: 1px solid black; }
-        th, td { padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        h1 { text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .link {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
+
 <body>
-    <h1>Y-topia 出退勤管理システム</h1>
+    <h1><a href="/" class="link">Y-topia 出退勤管理システム</a></h1>
     <h2>全ユーザーの出勤・退勤履歴</h2>
-    
+
     <table>
         <thead>
             <tr>
@@ -27,19 +58,20 @@
         </thead>
         <tbody>
             {% for record in records %}
-                <tr>
-                    <td>{{ record[0] }}</td>  <!-- ユーザー名 -->
-                    <td>{{ record[1] if record[1] else '---' }}</td>  <!-- 出勤時間 -->
-                    <td>{{ record[2] if record[2] else '---' }}</td>  <!-- 退勤時間 -->
-                </tr>
+            <tr>
+                <td>{{ record[0] }}</td> <!-- ユーザー名 -->
+                <td>{{ record[1] if record[1] else '---' }}</td> <!-- 出勤時間 -->
+                <td>{{ record[2] if record[2] else '---' }}</td> <!-- 退勤時間 -->
+            </tr>
             {% else %}
-                <tr>
-                    <td colspan="3">履歴がありません。</td>
-                </tr>
+            <tr>
+                <td colspan="3">履歴がありません。</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <p><a href="{{ url_for('index') }}">戻る</a></p>
+    <p><a href="/">ホームへ戻る</a></p>
 </body>
+
 </html>

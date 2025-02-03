@@ -69,13 +69,18 @@
         #title {
             position: relative;
         }
+
+        .link {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Y-topia 出退勤管理システム</h1>
+    <h1><a href="/" class="link">Y-topia 出退勤管理システム</a></h1>
     <div id="title">
-        <h2>研C315に出勤中のスタッフ</h2>
+        <h2><a href="/working_staff" class="link">研C315に出勤中のスタッフ</a></h2>
         <p><a href="http://10.206.84.200:5000" id="stamp">学内アクセスで打刻する</a></p>
     </div>
 
@@ -109,7 +114,7 @@
         　そのため、打刻をしていないメンバーは表示されません
     </p>
 
-    <p><a href="{{ url_for('index') }}">戻る</a></p>
+    <p><a href="/">ホームへ戻る</a></p>
 </body>
 
 </html>
