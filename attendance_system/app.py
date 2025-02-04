@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from admin_services import DiscordHandler
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from LINE.App_LINE import post
 # from admin.edit_db import readSQL
 
 # 親ディレクトリの設定(Yt24_attendance)
@@ -125,9 +126,15 @@ def index():
     conn = connect_db()
     cursor = conn.cursor()
 
+    # ユーザー名取得
+    cursor.execute("SELECT username FROM users WHERE id = ?", (user_id,))
+    name = cursor.fetchone()[0]
+
     if action == 'check_in':
         location = request.form["location"]
         cursor.execute('INSERT INTO attendance (user_id, check_in_time, location) VALUES (?, ?, ?)', (user_id, timestamp, location))
+        if location == "315": # 315の出勤をLINEへ送信
+            post(name, "checkIN")
     elif action == 'check_out': # 当日分のみ退勤打刻可とする
         cursor.execute('SELECT id, check_in_time FROM attendance WHERE user_id = ? AND check_out_time IS NULL ORDER BY id DESC LIMIT 1', (user_id,))
         latest = cursor.fetchall()
@@ -138,6 +145,10 @@ def index():
                 if latest_date == timestamp.date():
                     cursor.execute('UPDATE attendance SET check_out_time = ? WHERE id = ? AND check_out_time IS NULL',
                                 (timestamp, i[0]))
+                    cursor.execute("SELECT location FROM attendance WHERE id = ?", (i[0],))
+                    location = cursor.fetchone()[0]
+                    if location == "315": # 315の退勤をLINEへ送信
+                        post(name, "checkOUT")
                     break
                 return "打刻可能な出勤履歴がありません"
         else:
