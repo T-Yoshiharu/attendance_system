@@ -6,7 +6,7 @@ from admin_services import DiscordHandler
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from LINE.App_LINE import post
-# from admin.edit_db import readSQL
+from admin.edit_db import readSQL
 
 # 親ディレクトリの設定(Yt24_attendance)
 parent_dir = str(pathlib.Path(__file__).parent.parent.resolve())
@@ -123,12 +123,12 @@ def index():
     now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
     timestamp = datetime.strptime(now, '%Y/%m/%d %H:%M:%S')
 
+    # ユーザー名取得
+    name_o = readSQL(f"SELECT username FROM users WHERE id = {user_id}")
+    name = name_o[0][0]
+
     conn = connect_db()
     cursor = conn.cursor()
-
-    # ユーザー名取得
-    cursor.execute("SELECT username FROM users WHERE id = ?", (user_id,))
-    name = cursor.fetchone()[0]
 
     if action == 'check_in':
         location = request.form["location"]
