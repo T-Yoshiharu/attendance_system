@@ -1,10 +1,13 @@
-import sys, pathlib
+import sys, pathlib, sqlite3
 parent_dir = str(pathlib.Path(__file__).parent.parent.resolve())
 sys.path.append(parent_dir)
-from app import connect_db
+
+# データベース接続
+def connect_db():
+    return sqlite3.connect('attendance.db')
 
 
-# DMへの書き込み
+# DBへの書き込み
 def writeSQL(query: str = None):
     if query == None:
         return
@@ -15,7 +18,7 @@ def writeSQL(query: str = None):
     conn.commit()
     conn.close()
 
-    print("===書き込み成功===")
+    return "===書き込み成功==="
 
 
 # DBからの読み込み
@@ -38,7 +41,8 @@ if __name__ == '__main__':
 
         if func == "writeSQL":
             query = input("SQLのクエリ文を入力: ")
-            writeSQL(query)
+            log = writeSQL(query)
+            print(log)
         elif func == "readSQL":
             query = input("SQLのクエリ文を入力: ")
             ans = readSQL(query)
