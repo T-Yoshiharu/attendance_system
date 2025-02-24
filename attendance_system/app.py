@@ -194,42 +194,68 @@ def get_index():
 
     return render_template('index.html', attendance=attendance, working_hours=working_hours, username=username, location=location, is_checkout=is_checkout, time=now)
 
-# ユーザーおよび管理者の退勤履歴を表示
+
+# ユーザーの出退勤履歴を表示（一般ユーザーモード）
 @app.route('/history', methods=['GET'])
-def history():
+def history_defalt():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     user_id = session['user_id']
+    admin = False
+    is_admin = session.get('is_admin', 0)
+    if is_admin:
+        admin = True
+
+    records = get_history(0, user_id)
+
+    return render_template('history.html', records=records, isAdmin = admin)
+
+
+# 全ユーザーの出退勤履歴を表示（管理者モード）
+@app.route('/admin_history', methods=['GET'])
+def history_admin():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
     is_admin = session.get('is_admin', 0)
 
+    if is_admin:
+        records = get_history(1)
+        return render_template('admin_history.html', records=records)
+    else:
+        return redirect(url_for("history_defalt"))
+
+
+# 出退勤の打刻履歴をDBから取得する
+def get_history(mode:int, u_id:str = ""):
     conn = connect_db()
     cursor = conn.cursor()
 
-    if is_admin:
-        # 管理者の場合、全ユーザーの履歴を取得
-        cursor.execute('''
+    match mode:
+        case 1: # 管理者の場合、全ユーザーの履歴を取得
+            cursor.execute('''
             SELECT u.username, a.check_in_time, a.check_out_time, l.location_name
             FROM attendance a
             JOIN users u ON a.user_id = u.id
             JOIN locations l ON a.location = l.id
             ORDER BY a.check_in_time DESC
         ''')
-    else:
-        # 一般ユーザーの場合、自分の履歴のみ取得
-        cursor.execute('''
+        case 0: # 一般ユーザーの場合、自分の履歴のみ取得
+            cursor.execute('''
             SELECT u.username, a.check_in_time, a.check_out_time, l.location_name
             FROM attendance a
             JOIN users u ON a.user_id = u.id
             JOIN locations l ON a.location = l.id
             WHERE a.user_id = ?
             ORDER BY a.check_in_time DESC
-        ''', (user_id,))
+        ''', (u_id,))
 
-    records = cursor.fetchall()
+    out = cursor.fetchall()
     conn.close()
 
-    return render_template('history.html', records=records)
+    return out
+
 
 # ユーザー登録
 @app.route('/register', methods=['GET', 'POST'])

@@ -1,22 +1,83 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出退勤管理システム | 出勤・退勤履歴</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        table, th, td { border: 1px solid black; }
-        th, td { padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        h1 { text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #stamp {
+            text-decoration: none;
+            display: block;
+            width: 250px;
+            padding: 10px 0;
+            margin-left: auto;
+            background: #ffbf00;
+            color: #140e00;
+            text-align: center;
+        }
+
+        @media screen and (min-width: 480px) {
+            #stamp {
+                font-size: large;
+                position: absolute;
+                right: 0px;
+                top: -10px;
+            }
+        }
+
+        #stamp:hover {
+            background: #ffae00;
+        }
+
+        #title {
+            position: relative;
+        }
     </style>
 </head>
+
 <body>
     <h1>Y-topia 出退勤管理システム</h1>
-    <h2>出勤・退勤履歴</h2>
-    
+    <div id="title">
+        <h2>出勤・退勤履歴</h2>
+        {% if isAdmin %}
+        <p><a href="{{ url_for('history_admin') }}" id="stamp">全ユーザーの履歴</a></p>
+        {% endif %}
+    </div>
+
+    <p style="text-align: right"><a href="{{ url_for('index') }}">ホームへ戻る</a></p>
+
     <table>
         <thead>
             <tr>
@@ -28,20 +89,21 @@
         </thead>
         <tbody>
             {% for record in records %}
-                <tr>
-                    <td>{{ record[0] }}</td>  <!-- ユーザー名 -->
-                    <td>{{ record[1] if record[1] else '---' }}</td>  <!-- 出勤時間 -->
-                    <td>{{ record[2] if record[2] else '---' }}</td>  <!-- 退勤時間 -->
-                    <td>{{ record[3] if record[3] else '---' }}</td>  <!-- 活動場所 -->
-                </tr>
+            <tr>
+                <td>{{ record[0] }}</td> <!-- ユーザー名 -->
+                <td>{{ record[1] if record[1] else '---' }}</td> <!-- 出勤時間 -->
+                <td>{{ record[2] if record[2] else '---' }}</td> <!-- 退勤時間 -->
+                <td>{{ record[3] if record[3] else '---' }}</td> <!-- 活動場所 -->
+            </tr>
             {% else %}
-                <tr>
-                    <td colspan="3">履歴がありません。</td>
-                </tr>
+            <tr>
+                <td colspan="3">履歴がありません。</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <p><a href="{{ url_for('index') }}">戻る</a></p>
+    <p><a href="{{ url_for('index') }}">ホームへ戻る</a></p>
 </body>
+
 </html>
