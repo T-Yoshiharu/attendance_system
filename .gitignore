@@ -1,6 +1,7 @@
 attendance.db
 members.csv
 id.json
+tmp.json
 logs
 backupDB
 __pycache__
