@@ -1,40 +1,70 @@
 <!DOCTYPE html>
 <html lang="ja">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出退勤管理システム | 全ユーザーの出勤・退勤履歴</title>
     <style>
         body {
+           
             font-family: Arial, sans-serif;
+           
             margin: 20px;
+       
         }
+
 
         table {
+           
             width: 100%;
+           
             border-collapse: collapse;
+           
             margin-bottom: 20px;
+       
         }
+
 
         table,
+       
         th,
+       
         td {
+           
             border: 1px solid black;
+       
         }
 
+
         th,
+       
         td {
+           
             padding: 10px;
+           
             text-align: left;
+       
         }
+
 
         th {
+           
             background-color: #f2f2f2;
+       
         }
 
+
         h1 {
+           
             text-align: center;
+        }
+
+        .link {
+            text-decoration: none;
+            color: black;
+       
         }
 
         #stamp {
@@ -67,8 +97,9 @@
     </style>
 </head>
 
+
 <body>
-    <h1>Y-topia 出退勤管理システム</h1>
+    <h1><a href="/" class="link">Y-topia 出退勤管理システム</a></h1>
     <div id="title">
         <h2>全ユーザーの出勤・退勤履歴</h2>
         <p><a href="{{ url_for('history_defalt') }}" id="stamp">自分の履歴</a></p>
@@ -101,7 +132,8 @@
         </tbody>
     </table>
 
-    <p><a href="{{ url_for('index') }}">ホームへ戻る</a></p>
+    <p><a href="/">ホームへホームへ戻る</a></p>
 </body>
+
 
 </html>

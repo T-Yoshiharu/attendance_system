@@ -1,29 +1,56 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出退勤管理システム | ログイン</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { max-width: 300px; margin: auto; }
-        label, input { display: block; margin-bottom: 10px; }
-        button { width: 100%; padding: 10px; }
-        h1 { text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 300px;
+            margin: auto;
+        }
+
+        label,
+        input {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .link {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
+
 <body>
-    <h1>Y-topia 出退勤管理システム</h1>
-    <h2>ログイン</h2>
+    <h1><a href="/" class="link">Y-topia 出退勤管理システム</a></h1>
+    <h2><a href="/login" class="link">ログイン</a></h2>
     <form method="POST">
         <label for="username">ユーザー名</label>
         <input type="text" name="username" required>
-        
+
         <label for="password">パスワード</label>
         <input type="password" name="password" required>
-        
+
         <button type="submit">ログイン</button>
     </form>
     <p>アカウント登録は、<a href="{{ url_for('register') }}">こちら</a></p>
 </body>
+
 </html>
